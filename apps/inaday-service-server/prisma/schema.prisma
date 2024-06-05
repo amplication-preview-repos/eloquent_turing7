@@ -1,0 +1,79 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Product {
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  createdAt   DateTime  @default(now())
+  description String?
+  id          String    @id @default(cuid())
+  name        String?
+  price       Float?
+  stock       Int?
+  updatedAt   DateTime  @updatedAt
+}
+
+model Customer {
+  address   Address? @relation(fields: [addressId], references: [id])
+  addressId String?
+  createdAt DateTime @default(now())
+  email     String?
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  orders    Order[]
+  password  String?
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  createdAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  name      String?
+  products  Product[]
+  updatedAt DateTime  @updatedAt
+}
+
+model Order {
+  createdAt  DateTime         @default(now())
+  customer   Customer?        @relation(fields: [customerId], references: [id])
+  customerId String?
+  id         String           @id @default(cuid())
+  status     EnumOrderStatus?
+  totalPrice Float?
+  updatedAt  DateTime         @updatedAt
+}
+
+model Address {
+  city      String?
+  country   String?
+  createdAt DateTime   @default(now())
+  customers Customer[]
+  id        String     @id @default(cuid())
+  state     String?
+  street    String?
+  updatedAt DateTime   @updatedAt
+  zipcode   String?
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumOrderStatus {
+  Option1
+}
